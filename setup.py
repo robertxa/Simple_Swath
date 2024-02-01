@@ -42,7 +42,8 @@ setup(name='simple_swath',
 		'alive_progress',
 		'matplotlib_scalebar',
 		'numpy',
-		'csv'
+		'csv',
+		'alive_progress'
 	],
 	#classifiers=[
 	#	"Programming language :: Python",
