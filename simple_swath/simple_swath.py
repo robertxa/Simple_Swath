@@ -149,7 +149,7 @@ def swath(raster_path, shapefile_path, outfile,
     # Print header
     print('#################################################################')
     print('                   Build swath profile                           ')
-    print('              (c) 2024 B. Lehman & X. Robert                     ')
+    print('              (c) 2024 B. Lehmann & X. Robert                     ')
     print('\n  - Raster: %s' %(raster_path))
     print('   - Shapefile: %s' %(shapefile_path))
     print('   - width: %s m' %(spl_wndw))
