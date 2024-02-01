@@ -28,27 +28,27 @@ To use options or inputs, you need to set them as
 	swath(option_name = option_value, [...])
 	
 Options/inputs are (option_names):
+
 	1. raster_path (str)              : Path of the Raster to use.
 										The raster needs to be projected; units should be meters
-    2. shapefile_path (str)           : Path of the shapefile to use to extract the profile.
+  2. shapefile_path (str)           : Path of the shapefile to use to extract the profile.
 										The shapefile should be in the same projection than the input raster
 	3. outfile (str)                  : Prefix to add to the outputs' names.
-    4. spl_incrt (float)              : Increment along the profile (in m).
+  4. spl_incrt (float)              : Increment along the profile (in m).
 	5. spl_wndw (float)               : Width of the box to build (in m).
-    6. bins (integer, optional)       : Number of categories to compute the histogram.
-    7. minmax (bool, optional)        : True to plot the min/max. 
+  6. bins (integer, optional)       : Number of categories to compute the histogram.
+  7. minmax (bool, optional)        : True to plot the min/max. 
                                         Defaults to False.
-    8. frequencyplot (bool, optional) : True to plot the frequency. 
+  8. frequencyplot (bool, optional) : True to plot the frequency. 
                                         Defaults to False.
-    9. TEMP (bool, optional)          : True to keep the temporary shapefiles,
+  9. TEMP (bool, optional)          : True to keep the temporary shapefiles,
                                         False to delete the folder TEMP/.
                                         Defaults to False.
-    10. ylim (tuple, optional)        : Tuple of y limits for the graph profile;
+  10. ylim (tuple, optional)        : Tuple of y limits for the graph profile;
                                         Defaults to None
-    11. subplots (bool, optional)     : True to plot the raster and the swath on the same plot
+  11. subplots (bool, optional)     : True to plot the raster and the swath on the same plot
                                         False to plot the raste and the swath as two separate plots
                                         default =  False
-
 
 Help files
 ----------
