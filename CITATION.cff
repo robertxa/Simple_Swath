@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Lehmann"
+  given-names: "Benjamin"
+  orcid: "https://orcid.org/0000-0003-0077-6792"
+- family-names: "Robert"
+  given-names: "Xavier"
+  orcid: "https://orcid.org/0000-0002-0567-7497"
+title: "simple_swath, a simple Python code to extract swath profile using a shapefile"
+version: 2024
+doi: 
+date-released: 2024-02-02
+url: "https://github.com/robertxa/simple_swath"

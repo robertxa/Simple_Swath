@@ -1,0 +1,12 @@
+TO DO
+
+	- 
+	- 
+
+BUGS FOUNDS/TO BE CORRECTED
+	- 
+
+DONE
+	- 2024/02/01: save stats as a pickle binary file
+	- 2024/02/01: Separate output graphs by default; option for subgraphs
+	- 
