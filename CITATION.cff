@@ -9,6 +9,6 @@ authors:
   orcid: "https://orcid.org/0000-0002-0567-7497"
 title: "simple_swath, a simple Python code to extract swath profile using a shapefile"
 version: 2024
-doi: 
+doi: "https://zenodo.org/doi/10.5281/zenodo.10606462"
 date-released: 2024-02-02
 url: "https://github.com/robertxa/simple_swath"

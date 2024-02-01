@@ -37,13 +37,11 @@ setup(name='simple_swath',
 	packages=['simple_swath'],
 	install_requires=[
         'numpy',
-		#'osgeo',
 		'gdal',
         'shapely',
 		'rasterstats',
-		'alive_progress',
-		'matplotlib_scalebar',
 		'matplotlib',
+		'matplotlib_scalebar',
 		'alive_progress'
 	],
 	#classifiers=[

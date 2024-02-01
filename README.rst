@@ -9,6 +9,17 @@ Install
 To install it :
 	pip install simple_swath
 
+Dependencies
+------------
+
+- numpy
+- gdal
+- shapely
+- rasterstats
+- alive_progress
+- matplotlib
+- matplotlib_scalebar
+
 Usage
 -----
 
@@ -70,9 +81,8 @@ The module outputs pdfs of graphs, csv files, and pickle binary files.
 How to cite
 -----------
 
-.. image:: https://zenodo.org/badge/159739189.svg
-  :target: https://zenodo.org/doi/10.5281/zenodo.10020982
-
+.. image:: https://zenodo.org/badge/751342655.svg
+  :target: https://zenodo.org/doi/10.5281/zenodo.10606462
 
 Licence
 -------
