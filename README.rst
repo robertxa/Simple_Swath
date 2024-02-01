@@ -29,8 +29,9 @@ To use options or inputs, you need to set them as
 	
 Options/inputs are (option_names):
 
-	1. raster_path (str)              : Path of the Raster to use.
-										The raster needs to be projected; units should be meters
+	1. raster_path (str)              :
+  Path of the Raster to use.
+  The raster needs to be projected; units should be meters
   2. shapefile_path (str)           : Path of the shapefile to use to extract the profile.
 										The shapefile should be in the same projection than the input raster
 	3. outfile (str)                  : Prefix to add to the outputs' names.
