@@ -41,6 +41,7 @@ setup(name='simple_swath',
 		'rasterstats',
 		'alive_progress',
 		'matplotlib_scalebar',
+		'numpy',
 		'csv'
 	],
 	#classifiers=[
