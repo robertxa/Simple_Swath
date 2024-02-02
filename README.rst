@@ -79,9 +79,11 @@ Outputs
 
 The module outputs pdfs of graphs, csv files, and pickle binary files.
 
-	1. pdfs are the plot of the raster with the line use for the swath, and the swath profile
-	2. csv files are a record of the data use to plot the swath (max, min, mean, median, 1s)
-	3. pickle binary files record the data used plot the frequency plot. There are two files. The file "rater_freqs.pickle" contains the frequency data, and the file "bin_edges.pickle" contains the bins extend of the frequency.
+1. **pdfs** are the plot of the raster with the line use for the swath, and the swath profile
+
+2. **csv files** are a record of the data use to plot the swath (max, min, mean, median, 1s)
+
+3. **pickle binary files** record the data used plot the frequency plot. There are two files. The file "rater_freqs.pickle" contains the frequency data, and the file "bin_edges.pickle" contains the bins extend of the frequency.
 	
 
 How to cite
