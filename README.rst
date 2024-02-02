@@ -41,27 +41,27 @@ To use options or inputs, you need to set them as:
 	
 Options/inputs are (option_names):
 
-#. raster_path (str)              : Path of the Raster to use. The raster needs to be projected; the units of the grid should be meters (m)
+#. **raster_path (str)**              : Path of the Raster to use. The raster needs to be projected; the units of the grid should be meters (m)
   
-#. shapefile_path (str)           : Path of the shapefile to use to extract the profile. The shapefile should be in the same projection than the input raster
+#. **shapefile_path (str)**           : Path of the shapefile to use to extract the profile. The shapefile should be in the same projection than the input raster
 	
-#. outfile (str)                  : Prefix to add to the outputs' names.
+#. **outfile (str)**                  : Prefix to add to the outputs' names.
   
-#. spl_incrt (float)              : Increment along the profile (in m).
+#. **spl_incrt (float)**              : Increment along the profile (in m).
 	
-#. spl_wndw (float)               : Width of the box to build (in m).
+#. **spl_wndw (float)**               : Width of the box to build (in m).
   
-#. bins (integer, optional)       : Number of categories to compute the histogram.
+#. **bins (integer, optional)**       : Number of categories to compute the histogram.
   
-#. minmax (bool, optional)        : True to plot the min/max. Defaults to False.
+#. **minmax (bool, optional)**        : True to plot the min/max. Defaults to False.
   
-#. frequencyplot (bool, optional) : True to plot the frequency. Defaults to False.
+#. **frequencyplot (bool, optional)** : True to plot the frequency. Defaults to False.
   
-#. TEMP (bool, optional)          : True to keep the temporary shapefiles, False to delete the folder TEMP/. Defaults to False.
+#. **TEMP (bool, optional)**          : True to keep the temporary shapefiles, False to delete the folder TEMP/. Defaults to False.
   
-#. ylim (tuple, optional)        : Tuple of y limits for the graph profile. Defaults to None
+#. **ylim (tuple, optional)**        : Tuple of y limits for the graph profile. Defaults to None
   
-#. subplots (bool, optional)     : True to plot the raster and the swath on the same plot, False to plot the raste and the swath as two separate plots. Default =  False
+#. **subplots (bool, optional)**     : True to plot the raster and the swath on the same plot, False to plot the raste and the swath as two separate plots. Default =  False
 
 
 .. caution::
