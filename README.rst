@@ -65,8 +65,7 @@ Options/inputs are (option_names):
 #. subplots (bool, optional)     : True to plot the raster and the swath on the same plot, False to plot the raste and the swath as two separate plots. Default =  False
 
 .. warning::
-
-	Be carefull, the raster should be projected and should be in meters (m)...
+   Be carefull, the raster should be projected and should be in meters (m)...
 
 Help files
 ----------
