@@ -30,15 +30,14 @@ Inside a (i)python environnement:
 To import the module:
 	>>> from simple_swath import swath
 	
-To 
+To run the swath extraction:
 	>>> swath(raster_file = 'Rastername', shapefile_file = 'shapename', outfile = 'prefixname', increment_value = 10, window_size = 100, bins = 40, meanmedian = 'mean', minmax = True, frequencyplot = True, TEMP = False, ylim = None, subplots = True)
 
 Options/inputs
 --------------
 
-To use options or inputs, you need to set them as
-	
-	swath(option_name = option_value, [...])
+To use options or inputs, you need to set them as:
+	>>> swath(option_name = option_value, [...])
 	
 Options/inputs are (option_names):
 
@@ -64,7 +63,7 @@ Options/inputs are (option_names):
   
 #. subplots (bool, optional)     : True to plot the raster and the swath on the same plot, False to plot the raste and the swath as two separate plots. Default =  False
 
-.. warning::
+.. note::
    Be carefull, the raster should be projected and should be in meters (m)...
 
 Help files
