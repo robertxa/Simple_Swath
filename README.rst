@@ -2,14 +2,14 @@ Simple Swath
 ============
 
 This module is designed to extract a swath profile from a raster using a line shapefile.
-Finally, it has been completely recoded, but this is a simplification of the *pyswath* module (https://github.com/robertxa/pyswath). The main difference is that *pyswath* relies on profiles defined by points, *simple_swath* relies on a shapefile, and not only on points definition.
+Finally, it has been completely recoded, but this is a simplification of the **pyswath** module (https://github.com/robertxa/pyswath). The main difference is that **pyswath** relies on profiles defined by points, **simple_swath** relies on a shapefile, and not only on points definition.
 
 Install
 -------
 
 To install it :
 ::
-	pip install simple_swath
+	$ pip install simple_swath
 
 Dependencies
 ------------
@@ -65,6 +65,7 @@ Options/inputs are (option_names):
 #. subplots (bool, optional)     : True to plot the raster and the swath on the same plot, False to plot the raste and the swath as two separate plots. Default =  False
 
 .. warning::
+
 	Be carefull, the raster should be projected and should be in meters (m)...
 
 Help files
