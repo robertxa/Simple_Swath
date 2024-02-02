@@ -41,7 +41,7 @@ To use options or inputs, you need to set them as:
 	
 Options/inputs are (option_names):
 
-#. raster_path (str)              : Path of the Raster to use. The raster needs to be projected; units should be meters
+#. raster_path (str)              : Path of the Raster to use. The raster needs to be projected; the units of the grid should be meters (m)
   
 #. shapefile_path (str)           : Path of the shapefile to use to extract the profile. The shapefile should be in the same projection than the input raster
 	
@@ -63,8 +63,8 @@ Options/inputs are (option_names):
   
 #. subplots (bool, optional)     : True to plot the raster and the swath on the same plot, False to plot the raste and the swath as two separate plots. Default =  False
 
-.. note::
-   Be carefull, the raster should be projected and should be in meters (m)...
+.. caution::
+   Be carefull, the raster should be projected and the grid should be in meters (m)...
 
 Help files
 ----------
