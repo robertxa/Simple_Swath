@@ -31,7 +31,7 @@ To import the module:
 	>>> from simple_swath import swath
 	
 To run the swath extraction:
-	>>> swath(raster_file = 'Rasterpathandname', shapefile_file = 'shapepathandname', outfile = 'prefixname', increment_value = 10, window_size = 100, bins = 40, meanmedian = 'mean', minmax = True, frequencyplot = True, TEMP = False, ylim = None, subplots = True)
+	>>> swath(raster_path = 'Rasterpathandname', shapefile_path = 'shapepathandname', outfile = 'prefixname', increment_value = 10, window_size = 100, bins = 40, meanmedian = 'mean', minmax = True, frequencyplot = True, TEMP = False, ylim = None, subplots = True)
 
 Options/inputs
 --------------
