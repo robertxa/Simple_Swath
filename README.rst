@@ -21,6 +21,8 @@ Dependencies
 - alive_progress
 - matplotlib
 - matplotlib_scalebar
+- csv
+- pickle
 
 Usage
 -----
@@ -31,7 +33,7 @@ To import the module:
 	>>> from simple_swath import swath
 	
 To run the swath extraction:
-	>>> swath(raster_path = 'Rasterpathandname', shapefile_path = 'shapepathandname', outfile = 'prefixname', increment_value = 10, window_size = 100, bins = 40, meanmedian = 'mean', minmax = True, frequencyplot = True, TEMP = False, ylim = None, subplots = True)
+	>>> swath(raster_path = 'Rasterpathandname', shapefile_path = 'shapepathandname', outfile = 'prefixname', increment_value = 10, window_size = 100, bins = 40, xshift = Non, nodata_value = -9999, meanmedian = 'mean', minmax = True, frequencyplot = True, TEMP = False, ylim = None, subplots = True)
 
 Options/inputs
 --------------
@@ -43,7 +45,7 @@ Options/inputs are (option_names):
 
 #. **raster_path (str)**              : Path of the Raster to use. The raster needs to be projected; the units of the grid should be meters (m)
   
-#. **shapefile_path (str)**           : Path of the shapefile to use to extract the profile. The shapefile should be in the same projection than the input raster
+#. **shapefile_path (str)**           : Path of the shapefile to use to extract the profile. The shapefile should be in the same projection than the input raster. The shapefile should have a line or polyline geometry (2D or 3D), and can have several features.
 	
 #. **outfile (str)**                  : Prefix to add to the outputs' names.
   
@@ -52,6 +54,13 @@ Options/inputs are (option_names):
 #. **spl_wndw (float)**               : Width of the box to build (in m).
   
 #. **bins (integer, optional)**       : Number of categories to compute the histogram.
+
+#. **xshift (real or list of reals, optional)**: if you need to shift a profile along the disance axis
+                                                for 1 profile, provide a real (or same shifting applied to all the profiles)
+                                                for n profiles in the shp, provide a list of n reals (len(xshit) == n)
+                                                Default to None. 
+
+#. **nodata_value (integer)**         : set the input raster's nodata value; default to None
   
 #. **minmax (bool, optional)**        : True to plot the min/max. Defaults to False.
   
@@ -81,7 +90,7 @@ The module outputs pdfs of graphs, csv files, and pickle binary files.
 
 1. **pdfs** are the plot of the raster with the line use for the swath, and the swath profile
 
-2. **csv files** are a record of the data use to plot the swath (max, min, mean, median, 1s)
+2. **csv files** are a record of the data use to plot the swath (max, min, mean, median, 1s). There is one file for each profile/feature. If a profile is shifted along distances, this is writen as a comment in the first line of the csv file
 
 3. **pickle binary files** record the data used plot the frequency plot. There are two files. The file "rater_freqs.pickle" contains the frequency data, and the file "bin_edges.pickle" contains the bins extend of the frequency.
 	

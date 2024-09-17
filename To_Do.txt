@@ -1,12 +1,18 @@
 TO DO
-
 	- 
 	- 
 
 BUGS FOUNDS/TO BE CORRECTED
 	- 
+	-  
 
 DONE
 	- 2024/02/01: save stats as a pickle binary file
 	- 2024/02/01: Separate output graphs by default; option for subgraphs
+	- 2024/09/13: Test if spl_inc and spl_wndw are larger than 3 * cell size
+	- 2024/09/13: Add support for 3D Line Stinrg (wkbLineString25D)
+	- 2024/09/17: Separate profiles when several features in the polylines shp, 1 profile for each polyline feature
+	- 2024/09/17: Reorganization of the compuation and the graph drawing
+	- 2024/09/17: Separate csv files when several features in the polylines shp, 1 file for each polyline feature
+	- 2024/09/17: Improve input raster's nodata_value considerations
 	- 

@@ -23,7 +23,7 @@ import pickle
 from alive_progress import alive_bar              # https://github.com/rsalmei/alive-progress
 
 #########################################################################################
-def buildbox(raster_path, raster_dataset, line, distance, k, spl_wndw, spl_incrt):
+def buildbox(raster_path, raster_dataset, line, distance, k, spl_wndw, spl_incrt, nodata_value = None):
 
     """
 	Create a polygon shapefile perpendicular at a distance "distance" along the line "line" 
@@ -34,12 +34,13 @@ def buildbox(raster_path, raster_dataset, line, distance, k, spl_wndw, spl_incrt
     This function is an adaptation of the makeshape function from pyswath (https://zenodo.org/badge/latestdoi/81983899)
 	
 	INPUTS:
-	   raster_path (str)            : path to the raster file
-	   raster_dataset (gdal raster) : raster from which to extract data
-       line (Shapely LineString)    : Shapely line shapefile object along which distances and positions are defined
-       distance (float)             : distance from the begining of the line, where to build the box (in m)
-       spl_wndw (float)             : width of the box to build (in m)
-	   spl_incrt (float)            : length of the box to build (in m)
+	   raster_path (str)               : path to the raster file
+	   raster_dataset (gdal raster)    : raster from which to extract data
+       line (Shapely LineString)       : Shapely line shapefile object along which distances and positions are defined
+       distance (float)                : distance from the begining of the line, where to build the box (in m)
+       spl_wndw (float)                : width of the box to build (in m)
+	   spl_incrt (float)               : length of the box to build (in m)
+       nodata_value (integer, optional): set the input raster's nodata value; default to None
 	
 	OUTPUTS:
 	   line.shp (ESRI shapefile)         : shapefile int Temp_XX/ folder
@@ -48,7 +49,7 @@ def buildbox(raster_path, raster_dataset, line, distance, k, spl_wndw, spl_incrt
 
 	
 	USAGE:
-	  values_around_point, stats = buildbox(raster_path, raster_dataset, line, distance, k, spl_wndw, spl_incrt)
+	  values_around_point, stats = buildbox(raster_path, raster_dataset, line, distance, k, spl_wndw, spl_incrt, [nodata_value])
 	
 	"""
 
@@ -99,48 +100,60 @@ def buildbox(raster_path, raster_dataset, line, distance, k, spl_wndw, spl_incrt
 	# Save and close everything
     ds = layer = feat = geom = None
 
+    # Deals with nodata values
+    if nodata_value == None:
+        if raster_dataset.GetRasterBand(1).GetNoDataValue() == None:
+            nodata_value = np.nan
+        else:
+            nodata_value = raster_dataset.GetRasterBand(1).GetNoDataValue()
+
     # Extract values included in the box
     stats = zonal_stats(vectors = shp,
 			            raster = raster_path, 
-			            #nodata_value = -9999,
-                        nodata_value = np.nan,
-                        #nodata_value = raster_dataset.GetRasterBand(1).GetNoDataValue(),
+                        nodata_value = nodata_value,
 			            raster_out = True,
 		                stats = ['min', 'max', 'median', 'mean', 'count'])
     
     values_around_point = [f['mini_raster_array'] for f in stats][0].compressed()
     # set -9999 values to NaN
-    values_around_point[values_around_point == -9999] = np.nan
+    
+    #values_around_point[values_around_point == -9999] = np.nan
+    values_around_point[values_around_point == nodata_value] = np.nan
 
     return values_around_point, stats
 
 
 #########################################################################################
 def swath(raster_path, shapefile_path, outfile, 
-          spl_incrt, spl_wndw, bins = None, 
+          spl_incrt, spl_wndw, bins = None, xshift = None, nodata_value = None,
           meanmedian = 'median', minmax = False, frequencyplot = False, TEMP = False,
           ylim = None, subplots = False):
     """
     
     Args:
-        raster_path (str)              : Path of the Raster to use.
-        shapefile_path (str)           : Path of the shapefile to use to extract the profile.
-        outfile (str)                  : Prefix to add to the outputs' names.
-        spl_incrt (float)              : Increment along the profile (in m).
-        spl_wndw (float)               : Width of the box to build (in m).
-        bins (integer, optional)       : Number of categories to compute the histogram.
-        minmax (bool, optional)        : True to plot the min/max. 
-                                         Defaults to False.
-        frequencyplot (bool, optional) : True to plot the frequency. 
-                                         Defaults to False.
-        TEMP (bool, optional)          : True to keep the temporary shapefiles,
-                                         False to delete the folder TEMP/.
-                                         Defaults to False.
-        ylim (tuple)                   : Tuple of y limits for the graph profile;
-                                         Defaults to None
-        subplots (bool, optional)      : True to plot the raster and the swath on the same plot
-                                         False to plot the raste and the swath as two separate plots
-                                         default =  False
+        raster_path (str)                       : Path of the Raster to use.
+        shapefile_path (str)                    : Path of the shapefile to use to extract the profile.
+        outfile (str)                           : Prefix to add to the outputs' names.
+        spl_incrt (float)                       : Increment along the profile (in m).
+        spl_wndw (float)                        : Width of the box to build (in m).
+        bins (integer, optional)                : Number of categories to compute the histogram.
+        xshift (real or list of reals, optional): if you need to shift a profile along the disance axis
+                                                  for 1 profile, provide a real (or same shifting applied to all the profiles)
+                                                  for n profiles in the shp, provide a list of n reals (len(xshit) == n)
+                                                  Default to None. 
+        nodata_value (integer, optional)        : set the input raster's nodata value; default to None
+        minmax (bool, optional)                 : True to plot the min/max. 
+                                                  Defaults to False.
+        frequencyplot (bool, optional)          : True to plot the frequency. 
+                                                  Defaults to False.
+        TEMP (bool, optional)                   : True to keep the temporary shapefiles,
+                                                  False to delete the folder TEMP/.
+                                                  Defaults to False.
+        ylim (tuple)                            : Tuple of y limits for the graph profile;
+                                                  Defaults to None
+        subplots (bool, optional)               : True to plot the raster and the swath on the same plot
+                                                  False to plot the raste and the swath as two separate plots
+                                                  default =  False
 
     Raises:
         ValueError : if the specified path to the raster or the shapefile does not exists
@@ -149,15 +162,18 @@ def swath(raster_path, shapefile_path, outfile,
     # Print header
     print('#################################################################')
     print('                   Build swath profile                           ')
-    print('              (c) 2024 B. Lehmann & X. Robert                     ')
-    print('\n  - Raster: %s' %(raster_path))
+    print('              (c) 2024 B. Lehmann & X. Robert                    ')
+    print('\n   - Raster: %s' %(raster_path))
     print('   - Shapefile: %s' %(shapefile_path))
     print('   - width: %s m' %(spl_wndw))
-    print('   - increment: %s m\n' %(spl_incrt))
+    print('   - increment: %s m' %(spl_incrt))
+    print('   - nodata_values: %s\n' %(nodata_value))
     print('################################################################\n')
 
     # Remove gdal warnings
     gdal.UseExceptions()
+
+    #### DO ALL CHECKS   #####
 
     print('\x1b[32;1m- Reading data...\x1b[0m')
     # Open the raster file
@@ -183,16 +199,22 @@ def swath(raster_path, shapefile_path, outfile,
         # And if not, make it
         os.mkdir('Outs')
 
-    # Initiate variables
-    if minmax:
-        raster_mins = []
-        raster_maxs = []
-    if meanmedian == 'median':
-        raster_medians = []
+    # check if spl_inc and spl_wndw are not to small, i.e. are at least 3 * px_size
+    incrt_threshold = 3 * px_size
+    if spl_incrt < incrt_threshold:
+        raise ValueError(f"Error: spl_incrt to small (< 3 * pixel size).")
+    elif spl_wndw < incrt_threshold :
+        raise ValueError(f"Error: spl_wndw to small (< 3 * pixel size).")
+
+    # Open the new figure(s)
+    if subplots:
+        # Plot the raster with the shapefile
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
     else:
-        raster_means = []
-    raster_std_devs = []
-    distances = []
+        # just beging to plot the raster with the line
+        fig, ax1 = plt.subplots()
+
+    #### Initiate variables ####
 
     if frequencyplot:
         # Compute the bins intervals for the histogram
@@ -203,9 +225,23 @@ def swath(raster_path, shapefile_path, outfile,
                                 stop = bin_max, #bin_max + bin_inc,
                                 step = bin_inc)
 
-    # Initiate loop on features
+    #### Initiate loop on features ####
     k = 0
+    lineLenght = [0]
+    distmax = [0]
+
     for feature in layer:
+        # Initiate variables
+        if minmax:
+            raster_mins = []
+            raster_maxs = []
+        if meanmedian == 'median':
+            raster_medians = []
+        else:
+            raster_means = []
+        raster_std_devs = []
+        distances = []
+
         geometry = feature.GetGeometryRef()
         if not os.path.isdir('TEMP_' + str(k)):
             # For each feature, if it does not exists,create a temporary folder, 
@@ -214,23 +250,25 @@ def swath(raster_path, shapefile_path, outfile,
             os.mkdir('TEMP_' + str(k))
 
         # Check geometry type
-        if geometry.GetGeometryType() == ogr.wkbLineString or geometry.GetGeometryType() == ogr.wkbPoint:
+        if geometry.GetGeometryType() == ogr.wkbLineString or geometry.GetGeometryType() == ogr.wkbPoint or geometry.GetGeometryType() == ogr.wkbLineString25D:
             coords = np.array(geometry.GetPoints())
 
             # Create a Shapely LineString
             line = LineString(coords)
             
+            # Reset iteration
+            iteration = 0
+
             if frequencyplot:
                 i = 0
             # Define the progress-bar
-            with alive_bar(len(range(0, int(line.length), spl_incrt)), title = "\x1b[32;1m- Processing profile\x1b[0m", length = 35) as bar:    
+            with alive_bar(len(range(0, int(line.length), spl_incrt)), title = "\x1b[32;1m- Processing profile %s/%s\x1b[0m" %(k+1, layer.GetFeatureCount()), length = 35) as bar:    
                 # Sample raster values at each point along the LineString
                 for distance in range(0, int(line.length), spl_incrt):
-                    
                     # Compute the box on which to compute stats
                     values_around_point, stats = buildbox(raster_path, raster_dataset, 
                                                           line, distance, k, 
-                                                          spl_wndw, spl_incrt)
+                                                          spl_wndw, spl_incrt, nodata_value)
 
                     point = line.interpolate(distance)
                     x_coord, y_coord = point.x, point.y
@@ -272,27 +310,131 @@ def swath(raster_path, shapefile_path, outfile,
                             raster_freqs = np.vstack((raster_freqs, raster_freqs_values/(values_around_point.size)))
                         i += 1
                     
+                    # update iteration
+                    iteration += 1
                     # update bar
                     bar()
                     # update the distance array
                     distances.append(distance)
 
-        # clean the TEMPs folder by default
-        if not TEMP:
-            print('\x1b[32;1m- Delating Temp...\x1b[0m')
-            rmtree('TEMP_' + str(k))
-
+        lineLenght.append(iteration)
+        #distmax.append(max(np.array(distances)))
         k += 1
 
-    print('\x1b[32;1m- Plotting...\x1b[0m')
-    
-    if subplots:
-        # Plot the raster with the shapefile
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
-    else:
-        # just beging to plot the raster with the line
-        fig, ax1 = plt.subplots()
+        # Second graph !
+        print('\x1b[32;1m- \tPlotting line number %s/%s...\x1b[0m' %(k, layer.GetFeatureCount()))
+        
+        # Apply x-shifting if requested by user
+        if xshift:
+            if len(xshift)>1:
+                if xshift[k-1]:
+                    xshiftapplied = xshift[k-1]
+                    print('\x1b[32;1m- \tLine number %s/%s shifted of %s km\x1b[0m' %(k, layer.GetFeatureCount(), xshiftapplied))
+                else:
+                    xshiftapplied = 0
+            else:
+                xshiftapplied = xshift
+                print('\x1b[32;1m- \tLine number %s/%s shifted of %s km\x1b[0m' %(k, layer.GetFeatureCount(), xshiftapplied))
+        else:
+            xshiftapplied = 0
+        
+        # Check if we plot in meters or kilometers; it depends on the length of the profile
+        km = False
+        if np.max(distances) > 2500:
+            distances = (np.array(distances) + xshiftapplied) / 1000
+            km = True
 
+        # Plot the graph distance = f(median raster value)
+        if frequencyplot:   # Plot the frequency of raster values if needed
+            img = ax2.imshow(raster_freqs.T, aspect = 'auto',
+                             #aspect = 1000,
+                             extent = (min(distances), max(distances),
+                                       #np.nanmin(raster_array), np.nanmax(raster_array)),
+                                       np.nanmin(bin_edges), np.nanmax(bin_edges)),
+                             cmap = 'Greys', 
+                             alpha = 1,
+                             origin = "lower")
+            cbar = fig.colorbar(img, ax=ax2, label='Frequency', shrink=0.7)
+            # Save the stats in a pickle format
+            f = open("Outs/rater_freqs_" + outfile + "_profile" + str(k) + ".pickle", 'wb')
+            pickle.dump(raster_freqs, f)
+            f.close()
+            f = open("Outs/bin_edges_" + outfile + "_profile" + str(k) + ".pickle", 'wb')
+            pickle.dump(bin_edges, f)
+
+        std_dev_array = np.array(raster_std_devs)
+
+        # plot medians
+        if meanmedian == 'median':
+            ax2.plot(distances, 
+                     raster_medians, 
+                     linestyle='-', color='red', label='median value')
+            median_array = np.array(raster_medians)
+            # fill in between
+            ax2.fill_between(distances, 
+                             median_array + std_dev_array,
+                             median_array - std_dev_array,
+                             color='r', alpha=0.3, label='±1σ')
+        else:
+            ax2.plot(distances,
+                     raster_means,
+                     linestyle='-', color='red', label='mean value')
+            mean_array = np.array(raster_means)
+            # fill in between
+            ax2.fill_between(distances, 
+                             mean_array + std_dev_array, mean_array - std_dev_array,
+                             color='r', alpha=0.3, label='±1σ')
+
+        if minmax:
+            # plot maxs
+            ax2.plot(distances,
+                     raster_maxs,
+                     linestyle='--', linewidth = 0.5, color='blue', label='min/max value')
+            # plot mins
+            ax2.plot(distances,
+                    raster_mins,
+                    linestyle='--', linewidth = 0.5, color='blue')#, label='min value')
+        
+        # Write the data to a CSV file
+        if meanmedian == 'median':
+            csv_file_path = "Outs/median_raster_" + outfile + "_values_with_std_dev_profile" + str(k) + ".csv"
+            with open(csv_file_path, mode='w', newline='') as csv_file:
+                if xshiftapplied != 0:
+                    if km:
+                        csv_file.write('# Warning: distance shifted by %s km!\n' %(xshiftapplied/1000))
+                    else:
+                        csv_file.write('# Warning: distance shifted by %s m!\n' %(xshiftapplied))
+                csv_writer = csv.writer(csv_file)
+                if km:
+                    csv_writer.writerow(['Distance [kilometers]', 'Mean Raster Value', 'Standard Deviation'])
+                else:    
+                    csv_writer.writerow(['Distance [meters]', 'Mean Raster Value', 'Standard Deviation'])
+                csv_writer.writerow(['Distance [meters]', 'Median Raster Value', 'Standard Deviation'])
+                for distance, median, std_dev in zip(distances, raster_medians, raster_std_devs):
+                    csv_writer.writerow([distance, median, std_dev])
+        else:
+            csv_file_path = "Outs/mean_raster_" + outfile + "_values_with_std_dev_profile" + str(k) + ".csv"
+            with open(csv_file_path, mode='w', newline='') as csv_file:
+                if xshiftapplied != 0:
+                    if km:
+                        csv_file.write('# Warning: distance shifted by %s km!\n' %(xshiftapplied/1000))
+                    else:
+                        csv_file.write('# Warning: distance shifted by %s m!\n' %(xshiftapplied))
+                csv_writer = csv.writer(csv_file)
+                if km:
+                    csv_writer.writerow(['Distance [kilometers]', 'Mean Raster Value', 'Standard Deviation'])
+                else:    
+                    csv_writer.writerow(['Distance [meters]', 'Mean Raster Value', 'Standard Deviation'])
+                for distance, mean, std_dev in zip(distances, raster_means, raster_std_devs):
+                    csv_writer.writerow([distance, mean, std_dev])
+
+         # clean the TEMPs folder by default
+        if not TEMP:
+            print('\x1b[32;1m- \tDelating Temporary files...\x1b[0m')
+            rmtree('TEMP_' + str(k-1))
+
+    print('\x1b[32;1m- Plotting the raster...\x1b[0m')
+    
     # First graph
     # Plot the raster
     img = ax1.imshow(raster_array, extent=(transform[0], transform[0] + transform[1] * raster_dataset.RasterXSize,
@@ -354,55 +496,12 @@ def swath(raster_path, shapefile_path, outfile,
         # Reopen a new figure to plot the swath
         fig, ax2 = plt.subplots()
 
-    # Second graph !
-    # First, check if we plot in meters or kilometers
-    km = False
-    if np.max(distances) > 2500:
-        distances = np.array(distances) / 1000
-        km = True
+    
 
-    # Plot the graph distance = f(median raster value)
-    if frequencyplot:   # Plot the frequency of raster values if needed
-        img = ax2.imshow(raster_freqs.T, aspect = 'auto',
-                         #aspect = 1000,
-                         extent = (min(distances), max(distances),
-                                   #np.nanmin(raster_array), np.nanmax(raster_array)),
-                                   np.nanmin(bin_edges), np.nanmax(bin_edges)),
-                         cmap = 'Greys', 
-                         alpha = 1,
-                         origin = "lower")
-        cbar = fig.colorbar(img, ax=ax2, label='Frequency', shrink=0.7)
-        # Save the stats in a pickle format
-        f = open("Outs/rater_freqs_" + outfile + ".pickle", 'wb')
-        pickle.dump(raster_freqs, f)
-        f.close()
-        f = open("Outs/bin_edges_" + outfile + ".pickle", 'wb')
-        pickle.dump(bin_edges, f)
+        #median_array = np.array(raster_medians)
+        ## fill in between
+        #ax2.fill_between(distances, median_array + std_dev_array, median_array - std_dev_array, color='r', alpha=0.3, label='±1σ')
 
-    std_dev_array = np.array(raster_std_devs)
-
-    # plot medians
-    if meanmedian == 'median':
-        ax2.plot(distances, raster_medians, linestyle='-', color='red', label='median value')
-        median_array = np.array(raster_medians)
-        # fill in between
-        ax2.fill_between(distances, median_array + std_dev_array, median_array - std_dev_array, color='r', alpha=0.3, label='±1σ')
-    else:
-        ax2.plot(distances, raster_means, linestyle='-', color='red', label='mean value')
-        mean_array = np.array(raster_means)
-        # fill in between
-        ax2.fill_between(distances, mean_array + std_dev_array, mean_array - std_dev_array, color='r', alpha=0.3, label='±1σ')
-
-
-    if minmax:
-        # plot maxs
-        ax2.plot(distances, raster_maxs, linestyle='--', linewidth = 0.5, color='blue', label='min/max value')
-        # plot mins
-        ax2.plot(distances, raster_mins, linestyle='--', linewidth = 0.5, color='blue')#, label='min value')
-
-    #median_array = np.array(raster_medians)
-    ## fill in between
-    #ax2.fill_between(distances, median_array + std_dev_array, median_array - std_dev_array, color='r', alpha=0.3, label='±1σ')
 
     if km:
         ax2.set_xlabel('Distance along profile [km]') 
@@ -410,9 +509,11 @@ def swath(raster_path, shapefile_path, outfile,
         ax2.set_xlabel('Distance [m]')
     ax2.set_ylabel('Median Raster Value')
 
-    # Show the plots
     plt.legend()
     plt.tight_layout()
+    handles, labels = plt.gca().get_legend_handles_labels()
+    by_label = dict(zip(labels, handles))
+    plt.legend(by_label.values(), by_label.keys())
     # Impose y limits if needed
     if ylim != None:
         ax2.set_ylim((ylim))
@@ -431,21 +532,9 @@ def swath(raster_path, shapefile_path, outfile,
 
     plt.close(fig)  # Close the figure to release resources
     
-    # Write the data to a CSV file
-    if meanmedian == 'median':
-        csv_file_path = "Outs/median_raster_" + outfile + "_values_with_std_dev.csv"
-        with open(csv_file_path, mode='w', newline='') as csv_file:
-            csv_writer = csv.writer(csv_file)
-            csv_writer.writerow(['Distance [meters]', 'Median Raster Value', 'Standard Deviation'])
-            for distance, median, std_dev in zip(distances, raster_medians, raster_std_devs):
-                csv_writer.writerow([distance, median, std_dev])
-    else:
-        csv_file_path = "Outs/mean_raster_" + outfile + "_values_with_std_dev.csv"
-        with open(csv_file_path, mode='w', newline='') as csv_file:
-            csv_writer = csv.writer(csv_file)
-            csv_writer.writerow(['Distance [meters]', 'Mean Raster Value', 'Standard Deviation'])
-            for distance, mean, std_dev in zip(distances, raster_means, raster_std_devs):
-                csv_writer.writerow([distance, mean, std_dev])
+
+
+    
 
     # Close the datasets
     raster_dataset = None
@@ -481,6 +570,13 @@ if __name__ == '__main__':
     window_size = 100
     bins = 100  # Needs to be adjest in function of the min/max of the whole raster
 
+    #xshift: to shift a profile along distance
+    xshift = None
+    #xshift = [0, 4000, -3000]
+
+    # To impose a nodata_value
+    nodata_value = None
+
     # to plot the mean or the median
     meanmedian = 'median'  # defaults value
     #meanmedian = 'mean'
@@ -503,8 +599,9 @@ if __name__ == '__main__':
     subplots = False
     #subplots = True
     
+
     swath(raster_file, shapefile_file, outfile,
-            increment_value, window_size, bins,
+            increment_value, window_size, bins, xshift, nodata_value,
             meanmedian, minmax, frequencyplot, TEMP,
             ylim, subplots)
 

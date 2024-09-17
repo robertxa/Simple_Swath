@@ -42,7 +42,9 @@ setup(name='simple_swath',
 		'rasterstats',
 		'matplotlib',
 		'matplotlib_scalebar',
-		'alive_progress'
+		'alive_progress',
+		'csv',
+		'pickle'
 	],
 	#classifiers=[
 	#	"Programming language :: Python",
