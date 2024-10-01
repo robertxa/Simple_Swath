@@ -154,7 +154,7 @@ def buildbox(raster_path, raster_dataset, line, distance, k, spl_wndw, spl_incrt
 def swath(raster_path, shapefile_path, outfile, 
           spl_incrt, spl_wndw, bins = None, xshift = None, nodata_value = None,
           meanmedian = 'median', minmax = False, frequencyplot = False, TEMP = False,
-          ylim = None, subplots = False, map_plot = None):
+          ylim = None, subplots = False, map_plot = None, profile_plot = None, profiles_colors = None):
     """
     
     Args:
@@ -189,6 +189,10 @@ def swath(raster_path, shapefile_path, outfile,
                                                                 'hshd_az'  : 315,   # Azimuth used to compute the hillshade
                                                                 'hshd_alt' : 45}    # Altitude used to compute the hillshade
                                                  default to None ; in that case, the values given in the ex. are used
+        profile_plot (dictionnary, optional)    :
+                                                 default to None ; in that case, the values given in the ex. are used
+        profiles_colors (list, optional)        :
+                                                 default to None ; in that case, all profiles are plot in red
 
     Raises:
         ValueError : if the specified path to the raster or the shapefile does not exists
@@ -207,6 +211,7 @@ def swath(raster_path, shapefile_path, outfile,
 
     # Remove gdal warnings
     gdal.UseExceptions()
+    #zonal_stats.UseExceptions()
 
     #### DO ALL CHECKS   #####
 
@@ -232,6 +237,14 @@ def swath(raster_path, shapefile_path, outfile,
             alpha = map_plot["alpha"]
         else:
             alpha= 0.7
+        if map_plot["map"] != None:
+            plotmap = map_plot["map"]
+        else:
+            plotmap = True
+        if map_plot["px_leg"] != None:
+            px_leg = map_plot["px_leg"]
+        else:
+            px_leg = "pixel value"
         if map_plot["hshd"] != None:
             hshd = map_plot["hshd"]
         else:
@@ -251,9 +264,40 @@ def swath(raster_path, shapefile_path, outfile,
     else:
         cmap = "terrain"
         alpha= 0.7
+        plotmap = True
+        px_leg = "pixel value"
         hshd = True
         hshd_az  = 315
         hshd_alt = 45
+    
+    if profile_plot != None:
+        if profile_plot["xlabel"] != None:
+            xlabel = profile_plot["xlabel"]
+        else:
+            xlabel = 'Distance'
+        if profile_plot["ylabel"] != None:
+            ylabel = profile_plot["ylabel"]
+        else:
+            ylabel = px_leg
+        if profile_plot["x-unit"] != None:
+            xunit = profile_plot["x-unit"]
+        else:
+            xunit = None
+        if profile_plot["xlim"] != None:
+            xlim = profile_plot["xlim"]
+        else:
+            xlim = None
+        if profile_plot["ylim"] != None:
+            ylim = profile_plot["ylim"]
+        else:
+            ylim = None
+    else:
+        xlabel = 'Distance'
+        ylabel = px_leg
+        xunit = None
+        xlim = None
+        ylim = None
+
 
     # Open the shapefile
     shapefile_dataset = ogr.Open(shapefile_path)
@@ -298,6 +342,11 @@ def swath(raster_path, shapefile_path, outfile,
         bins_values = np.arange(start = bin_min, #start = bin_min - bin_inc,
                                 stop = bin_max, #bin_max + bin_inc,
                                 step = bin_inc)
+
+    if profiles_colors != None and len(profiles_colors) != layer.GetFeatureCount():
+        raise ValueError(f"Error: lenght of profiles_colors (%s)is different than the number of profiles (%s layers)" %(len(profiles_colors), layer.GetFeatureCount()))
+    if profiles_colors == None:
+        profiles_colors = ['red'] * layer.GetFeatureCount()
 
     #### Initiate loop on features ####
     k = 0
@@ -403,20 +452,21 @@ def swath(raster_path, shapefile_path, outfile,
             if len(xshift)>1:
                 if xshift[k-1]:
                     xshiftapplied = xshift[k-1]
-                    print('\x1b[32;1m- \tLine number %s/%s shifted of %s km\x1b[0m' %(k, layer.GetFeatureCount(), xshiftapplied))
+                    print('\x1b[32;1m- \tLine number %s/%s shifted of %s m\x1b[0m' %(k, layer.GetFeatureCount(), xshiftapplied))
                 else:
                     xshiftapplied = 0
             else:
                 xshiftapplied = xshift
-                print('\x1b[32;1m- \tLine number %s/%s shifted of %s km\x1b[0m' %(k, layer.GetFeatureCount(), xshiftapplied))
+                print('\x1b[32;1m- \tLine number %s/%s shifted of %s m\x1b[0m' %(k, layer.GetFeatureCount(), xshiftapplied))
         else:
             xshiftapplied = 0
         
         # Check if we plot in meters or kilometers; it depends on the length of the profile
         km = False
-        if np.max(distances) > 2500:
+        if (np.max(distances) > 2500 and xunit == None) or xunit == 'km':
             distances = (np.array(distances) + xshiftapplied) / 1000
             km = True
+        distances = (np.array(distances) + xshiftapplied)
 
         # Plot the graph distance = f(median raster value)
         if frequencyplot:   # Plot the frequency of raster values if needed
@@ -442,22 +492,22 @@ def swath(raster_path, shapefile_path, outfile,
         if meanmedian == 'median':
             ax2.plot(distances, 
                      raster_medians, 
-                     linestyle='-', color='red', label='median value')
+                     linestyle = '-', color = profiles_colors[k-1], label = 'median value')
             median_array = np.array(raster_medians)
             # fill in between
             ax2.fill_between(distances, 
                              median_array + std_dev_array,
                              median_array - std_dev_array,
-                             color='r', alpha=0.3, label='±1σ')
+                             color = profiles_colors[k-1], alpha = 0.3, label = '±1σ')
         else:
             ax2.plot(distances,
                      raster_means,
-                     linestyle='-', color='red', label='mean value')
+                     linestyle = '-', color = profiles_colors[k-1], label='mean value')
             mean_array = np.array(raster_means)
             # fill in between
             ax2.fill_between(distances, 
                              mean_array + std_dev_array, mean_array - std_dev_array,
-                             color='r', alpha=0.3, label='±1σ')
+                             color = profiles_colors[k-1], alpha = 0.3, label = '±1σ')
 
         if minmax:
             # plot maxs
@@ -513,13 +563,17 @@ def swath(raster_path, shapefile_path, outfile,
     # Plot the raster
     extent = (transform[0], transform[0] + transform[1] * raster_dataset.RasterXSize,
                                     transform[3] + transform[5] * raster_dataset.RasterYSize, transform[3])
-    img = ax1.imshow(raster_array, extent = extent,
-                    cmap = cmap, alpha = 1)
-    cbar = fig.colorbar(img, ax=ax1, label='Pixel Value', shrink=0.7)
-    ax1.imshow(hillshade.ReadAsArray(), extent = extent,
-                    cmap = 'Greys', alpha = alpha)
+    if hshd:
+        ax1.imshow(hillshade.ReadAsArray(), extent = extent,
+                    cmap = 'Greys_r', alpha = 1)
+    if plotmap:
+        img = ax1.imshow(raster_array, extent = extent,
+                    cmap = cmap, alpha = alpha)
+        cbar = fig.colorbar(img, ax = ax1, label = px_leg, shrink = 0.7)
+    
 
     # Plot the shapefile polygons and segments
+    k = 0
     for feature in layer:
         geometry = feature.GetGeometryRef()
         if geometry.GetGeometryType() == ogr.wkbPolygon:
@@ -527,28 +581,29 @@ def swath(raster_path, shapefile_path, outfile,
             polygon = LineString(coords)
 
             # Plot the original polygon
-            ax1.plot(coords[:, 0], coords[:, 1], linestyle='-', color='red')
+            ax1.plot(coords[:, 0], coords[:, 1], linestyle = '-', color = profiles_colors[k], label = 'test')
 
             # Create a buffer around the polygon
             buffer_polygon = polygon.buffer(spl_wndw/2)
 
             # Plot the buffer
             buffer_x, buffer_y = buffer_polygon.exterior.xy
-            ax1.fill(buffer_x, buffer_y, color='red', alpha=0.3)
+            ax1.fill(buffer_x, buffer_y, color = profiles_colors[k], alpha = 0.3)
 
         elif geometry.GetGeometryType() == ogr.wkbLineString or geometry.GetGeometryType() == ogr.wkbPoint:
             coords = np.array(geometry.GetPoints())
             line = LineString(coords)
 
             # Plot the original line
-            ax1.plot(coords[:, 0], coords[:, 1], linestyle='-', color='red')
+            ax1.plot(coords[:, 0], coords[:, 1], linestyle = '-', color= profiles_colors[k])
 
             # Create a buffer around the line
             buffer_line = line.buffer(spl_wndw/2)
 
             # Plot the buffer
             buffer_x, buffer_y = buffer_line.exterior.xy
-            ax1.fill(buffer_x, buffer_y, color='red', alpha=0.3)        
+            ax1.fill(buffer_x, buffer_y, color = profiles_colors[k], alpha = 0.3)
+        k += 1        
 
     # Add scale bar to the map
     scalebar = ScaleBar(dx = px_size, location='lower right', 
@@ -556,6 +611,10 @@ def swath(raster_path, shapefile_path, outfile,
                         border_pad=0.2,
                         box_alpha = 0.7)
     ax1.add_artist(scalebar)
+    # Impose x and y limits if needed
+    ax1.set_xlim((transform[0], transform[0] + transform[1] * raster_dataset.RasterXSize))
+    ax1.set_ylim((transform[3] + transform[5] * raster_dataset.RasterYSize, transform[3]))
+    
     # Setting the number of ticks 
     ax1.locator_params(axis='both', nbins=6)
     for tick in ax1.get_yticklabels():
@@ -579,18 +638,22 @@ def swath(raster_path, shapefile_path, outfile,
         ## fill in between
         #ax2.fill_between(distances, median_array + std_dev_array, median_array - std_dev_array, color='r', alpha=0.3, label='±1σ')
 
-
-    if km:
-        ax2.set_xlabel('Distance along profile [km]') 
-    else:
-        ax2.set_xlabel('Distance [m]')
-    ax2.set_ylabel('Median Raster Value')
+    if km and xunit == None:
+        xlabel = xlabel + ' (km)'
+    elif not km and xunit == None:
+        xlabel = xlabel + ' (m)'
+    ax2.set_xlabel(xlabel)
+    ax2.set_ylabel(px_leg)
 
     plt.legend()
     plt.tight_layout()
     handles, labels = plt.gca().get_legend_handles_labels()
     by_label = dict(zip(labels, handles))
     plt.legend(by_label.values(), by_label.keys())
+    
+    # Impose x limits if needed
+    if xlim != None:
+        ax2.set_xlim((xlim))
     # Impose y limits if needed
     if ylim != None:
         ax2.set_ylim((ylim))
@@ -680,13 +743,27 @@ if __name__ == '__main__':
     #map_plot: Set colormap and hillshade for the map plot
     map_plot = {'cmap'    : "terrain",
                 'alpha'    : 0.7,
+                'map'      : True,
+                'px_leg'   : 'Elevation (m)',
                 'hshd'     : True,
                 'hshd_az'  : 315,
                 'hshd_alt' : 45}
+    
+    profile_plot = {'xlabel' : 'Distance (m)',
+                    'ylabel' : None,
+                    'x-unit' : 'm',
+                    'xlim'   : None,
+                    'ylim'   : None}
+
+    
+    #profiles_colors: set the colors of the swath when different features in the shapefile
+    #                 Should be a list with the same dimensions than the numbers of features
+    #                 Colors should be matplotlib colors
+    #profiles_colors = ['red', 'blue', 'green']
     
 
     swath(raster_file, shapefile_file, outfile,
             increment_value, window_size, bins, xshift, nodata_value,
             meanmedian, minmax, frequencyplot, TEMP,
-            ylim, subplots, map_plot)
+            ylim, subplots, map_plot, profile_plot, profiles_colors)
 

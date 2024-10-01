@@ -1,12 +1,9 @@
 TO DO
-	- Give the possibility to the user to:
-		* when several features to plot, to choose the color of each swath, and each feature
-		* To choose title/axes/legends
-		* 
+	- 
 	- 
 
 BUGS FOUNDS/TO BE CORRECTED
-	- 
+	- 2024/10/01: correction in shifting mode when plot in meters
 	-  
 
 DONE
@@ -21,4 +18,6 @@ DONE
 	- 2024/10/01: Give the possibility to the user to change the colormap of the raster
 	- 2024/10/01: Give the possibility to the user to add the hillshade below the raster
 	- 2024/10/01: Give the possibility to the user to Compute the hillshade through the module simple_swath
+	- 2024/10/01: Give the possibility to the user when several features to plot, to choose the color of each swath, and each feature
+	- 2024/10/01: Give the possibility to the user to choose title/axes/legends
 	- 
