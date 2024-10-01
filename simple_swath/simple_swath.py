@@ -181,8 +181,14 @@ def swath(raster_path, shapefile_path, outfile,
         subplots (bool, optional)               : True to plot the raster and the swath on the same plot
                                                   False to plot the raste and the swath as two separate plots
                                                   default =  False
-        map_plot (dictionnary, optional)        : 
-                                                 default to None
+        map_plot (dictionnary, optional)        : Dictionnary to tune the plot of the raster.
+                                                  It should be as 
+                                                    map_plot = {'cmap'    : "terrain",  # cmap used to plot the DEM
+                                                                'alpha'    : 0.7,   # transparency of the hillshade
+                                                                'hshd'     : True,  # True to plot a hillshade above the DEM
+                                                                'hshd_az'  : 315,   # Azimuth used to compute the hillshade
+                                                                'hshd_alt' : 45}    # Altitude used to compute the hillshade
+                                                 default to None ; in that case, the values given in the ex. are used
 
     Raises:
         ValueError : if the specified path to the raster or the shapefile does not exists
@@ -672,11 +678,11 @@ if __name__ == '__main__':
     subplots = True
 
     #map_plot: Set colormap and hillshade for the map plot
-    map_plot = {cmap    : "terrain",
-                alpha    : 0.7,
-                hshd     : True,
-                hshd_az  : 315,
-                hshd_alt : 45}
+    map_plot = {'cmap'    : "terrain",
+                'alpha'    : 0.7,
+                'hshd'     : True,
+                'hshd_az'  : 315,
+                'hshd_alt' : 45}
     
 
     swath(raster_file, shapefile_file, outfile,
