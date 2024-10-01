@@ -1,5 +1,8 @@
 TO DO
-	- 
+	- Give the possibility to the user to:
+		* when several features to plot, to choose the color of each swath, and each feature
+		* To choose title/axes/legends
+		* 
 	- 
 
 BUGS FOUNDS/TO BE CORRECTED
@@ -15,4 +18,7 @@ DONE
 	- 2024/09/17: Reorganization of the compuation and the graph drawing
 	- 2024/09/17: Separate csv files when several features in the polylines shp, 1 file for each polyline feature
 	- 2024/09/17: Improve input raster's nodata_value considerations
+	- 2024/10/01: Give the possibility to the user to change the colormap of the raster
+	- 2024/10/01: Give the possibility to the user to add the hillshade below the raster
+	- 2024/10/01: Give the possibility to the user to Compute the hillshade through the module simple_swath
 	- 

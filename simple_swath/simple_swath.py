@@ -122,12 +122,39 @@ def buildbox(raster_path, raster_dataset, line, distance, k, spl_wndw, spl_incrt
 
     return values_around_point, stats
 
+#########################################################################################
+#def hillshade(array, azimuth = 315, angle_altitude = 45):
+#    """
+#    Function to compute hillshade from a dem
+
+#    Args:
+#        array (float)         : input  (elevation values) as a numpy array of floats
+#        azimuth (float)       : sun azimuth for the hillshade in degrees
+#                                deflaut = 315
+#        angle_altitude (float): sun altitude for the hillshade in degrees
+#                                default = 45
+
+#    Returns:
+#        hillshade (float)     : numpy array of float, corresponding to thecomputed  hillshade
+#    """
+#    azimuth = 360.0 - azimuth 
+    
+#    x, y = np.gradient(array)
+#    slope = np.pi/2. - np.arctan(np.sqrt(x*x + y*y))
+#    aspect = np.arctan2(-x, y)
+#    azm_rad = azimuth*np.pi/180. # azimuth in radians
+#    alt_rad = angle_altitude*np.pi/180. # altitude in radians
+    
+#    # Compute hillshade
+#    shaded = np.sin(alt_rad)*np.sin(slope) + np.cos(alt_rad)*np.cos(slope)*np.cos((azm_rad - np.pi/2.) - aspect)
+    
+#    return 255*(shaded + 1)/2
 
 #########################################################################################
 def swath(raster_path, shapefile_path, outfile, 
           spl_incrt, spl_wndw, bins = None, xshift = None, nodata_value = None,
           meanmedian = 'median', minmax = False, frequencyplot = False, TEMP = False,
-          ylim = None, subplots = False):
+          ylim = None, subplots = False, map_plot = None):
     """
     
     Args:
@@ -154,6 +181,8 @@ def swath(raster_path, shapefile_path, outfile,
         subplots (bool, optional)               : True to plot the raster and the swath on the same plot
                                                   False to plot the raste and the swath as two separate plots
                                                   default =  False
+        map_plot (dictionnary, optional)        : 
+                                                 default to None
 
     Raises:
         ValueError : if the specified path to the raster or the shapefile does not exists
@@ -187,6 +216,39 @@ def swath(raster_path, shapefile_path, outfile,
     transform = raster_dataset.GetGeoTransform()
     px_size = transform[1]
 
+    # set specificities of the map plot
+    if map_plot != None:
+        if map_plot["cmap"] != None:
+            cmap = map_plot["cmap"]
+        else:
+            cmap = "terrain"
+        if map_plot["alpha"] != None:
+            alpha = map_plot["alpha"]
+        else:
+            alpha= 0.7
+        if map_plot["hshd"] != None:
+            hshd = map_plot["hshd"]
+        else:
+            hshd = True
+        if map_plot["hshd_az"] != None:
+            hshd_az = map_plot["hshd_az"]
+            if hshd_az > 360.0:
+                raise ValueError("Azimuth value should be less than or equal to 360 degrees")
+        else:
+            hshd_az = 315
+        if map_plot["hshd_alt"] != None:
+            hshd_alt = map_plot["hshd_alt"]
+            if hshd_alt > 90:
+                raise ValueError("Altitude value should be less than or equal to 90 degrees")
+        else:
+            hshd_alt = 45
+    else:
+        cmap = "terrain"
+        alpha= 0.7
+        hshd = True
+        hshd_az  = 315
+        hshd_alt = 45
+
     # Open the shapefile
     shapefile_dataset = ogr.Open(shapefile_path)
     if shapefile_dataset is None:
@@ -205,6 +267,12 @@ def swath(raster_path, shapefile_path, outfile,
         raise ValueError(f"Error: spl_incrt to small (< 3 * pixel size).")
     elif spl_wndw < incrt_threshold :
         raise ValueError(f"Error: spl_wndw to small (< 3 * pixel size).")
+
+
+    if hshd:
+        print("Computing hillshade...")
+        hillshade = gdal.DEMProcessing('', raster_dataset, 'hillshade', 
+                                       azimuth = hshd_az, altitude = hshd_alt, format='MEM')
 
     # Open the new figure(s)
     if subplots:
@@ -437,10 +505,13 @@ def swath(raster_path, shapefile_path, outfile,
     
     # First graph
     # Plot the raster
-    img = ax1.imshow(raster_array, extent=(transform[0], transform[0] + transform[1] * raster_dataset.RasterXSize,
-                                    transform[3] + transform[5] * raster_dataset.RasterYSize, transform[3]),
-                    cmap='terrain', alpha=1)
+    extent = (transform[0], transform[0] + transform[1] * raster_dataset.RasterXSize,
+                                    transform[3] + transform[5] * raster_dataset.RasterYSize, transform[3])
+    img = ax1.imshow(raster_array, extent = extent,
+                    cmap = cmap, alpha = 1)
     cbar = fig.colorbar(img, ax=ax1, label='Pixel Value', shrink=0.7)
+    ax1.imshow(hillshade.ReadAsArray(), extent = extent,
+                    cmap = 'Greys', alpha = alpha)
 
     # Plot the shapefile polygons and segments
     for feature in layer:
@@ -560,21 +631,22 @@ if __name__ == '__main__':
 
     #raster_file = "Test/Rasters/19581007-19790904_velocity_EPSG6342.tif" # --> OK
     #outfile = 'velocity-3'    
-
+    
     shapefile_file = "Test/SHP/Longitudinal_transect_EPSG6342.shp"
 
     #increment_value = 10
     #window_size = 100
 
-    increment_value = 20
+    increment_value = 10
     window_size = 100
-    bins = 100  # Needs to be adjest in function of the min/max of the whole raster
+    bins = 40  # Needs to be adjest in function of the min/max of the whole raster
 
     #xshift: to shift a profile along distance
     xshift = None
     #xshift = [0, 4000, -3000]
+    #
 
-    # To impose a nodata_value
+    #nodata_value: To impose a nodata_value
     nodata_value = None
 
     # to plot the mean or the median
@@ -595,13 +667,20 @@ if __name__ == '__main__':
     #ylim = (0,2.6)
     ylim = None    # if option not used
 
-    # Set if you want the rater plot and the swaht on the same fingure as sub-plots (True)
-    subplots = False
-    #subplots = True
+    # Set if you want the raster plot and the swath on the same fingure as sub-plots (True)
+    #subplots = False
+    subplots = True
+
+    #map_plot: Set colormap and hillshade for the map plot
+    map_plot = {cmap    : "terrain",
+                alpha    : 0.7,
+                hshd     : True,
+                hshd_az  : 315,
+                hshd_alt : 45}
     
 
     swath(raster_file, shapefile_file, outfile,
             increment_value, window_size, bins, xshift, nodata_value,
             meanmedian, minmax, frequencyplot, TEMP,
-            ylim, subplots)
+            ylim, subplots, map_plot)
 
