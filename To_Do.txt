@@ -20,4 +20,5 @@ DONE
 	- 2024/10/01: Give the possibility to the user to Compute the hillshade through the module simple_swath
 	- 2024/10/01: Give the possibility to the user when several features to plot, to choose the color of each swath, and each feature
 	- 2024/10/01: Give the possibility to the user to choose title/axes/legends
+	- 2024/10/02: remove DEM NaN values from the map plot
 	- 

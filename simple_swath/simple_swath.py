@@ -13,6 +13,7 @@
 import os, math
 from shutil import rmtree
 import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib_scalebar.scalebar import ScaleBar
 from osgeo import gdal, ogr
@@ -563,8 +564,20 @@ def swath(raster_path, shapefile_path, outfile,
     # Plot the raster
     extent = (transform[0], transform[0] + transform[1] * raster_dataset.RasterXSize,
                                     transform[3] + transform[5] * raster_dataset.RasterYSize, transform[3])
+    
+    # mask the raster array given the NaN
+    hillshd = hillshade.ReadAsArray()
+    if nodata_value != None:
+        raster_array[raster_array == nodata_value] = np.nan
+        hillshd = np.ma.array(hillshd, mask = np.isnan(raster_array))
+
+    #if type(cmap) == str:
+    #    cmap = mpl.colormaps.get_cmap(cmap)
+    #    cmap.set_bad(color = 'white')
+    #    #cmap.set_bad(color = 'white', 1.)
+
     if hshd:
-        ax1.imshow(hillshade.ReadAsArray(), extent = extent,
+        ax1.imshow(hillshd, extent = extent,
                     cmap = 'Greys_r', alpha = 1)
     if plotmap:
         img = ax1.imshow(raster_array, extent = extent,
@@ -614,7 +627,7 @@ def swath(raster_path, shapefile_path, outfile,
     # Impose x and y limits if needed
     ax1.set_xlim((transform[0], transform[0] + transform[1] * raster_dataset.RasterXSize))
     ax1.set_ylim((transform[3] + transform[5] * raster_dataset.RasterYSize, transform[3]))
-    
+
     # Setting the number of ticks 
     ax1.locator_params(axis='both', nbins=6)
     for tick in ax1.get_yticklabels():
