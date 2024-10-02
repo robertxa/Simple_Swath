@@ -88,11 +88,11 @@ Options/inputs are (option_names):
                                                                   'xlim'   : None,  
                                                                   'ylim'   : None}
                                                   
-                                                  where **xlabel** and **ylabel** are the x-axis and y-axis Labels (str; if y-label isNone, default set to 'pixel value'), **x-unit** is unit of the x-axis (it should be None, 'm' or 'km), and xlim and ylim set the range of x-axis and y-axis (as (xmin, xmax) and (ymin, ymax))
+                                                  where **xlabel** and **ylabel** are the x-axis and y-axis Labels (str; if ylabel is None, default set to 'pixel value'), **x-unit** is unit of the x-axis (it should be None, 'm' or 'km), and **xlim** and **ylim** set the range of x-axis and y-axis (as (xmin, xmax) and (ymin, ymax))
                                                   If a parameter is ommited or set to None, the default value will be applied.
                                                   default to None ; in that case, the values given in the ex. are used
 
-#. **profiles_colors (list, optional)**        : List of the colors to use for the swaths.
+#. **profiles_colors (list, optional)**        : List of the matplotlib colors (see https://matplotlib.org/stable/gallery/color/colormap_reference.html) to use for the swaths.
                                                   The length of the list should be equal to the number of the swaths/features in the input shapefile
                                                   default to None ; in that case, all profiles are plot in red
 

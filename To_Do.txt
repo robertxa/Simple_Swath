@@ -1,5 +1,6 @@
 TO DO
-	- 
+	- BUG?: Check frequency plot --> seems to be outside of min-max bounds...
+	- simplify colorbar for frequency plot when more than one single swaths
 	- 
 
 BUGS FOUNDS/TO BE CORRECTED

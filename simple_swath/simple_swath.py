@@ -185,15 +185,26 @@ def swath(raster_path, shapefile_path, outfile,
         map_plot (dictionnary, optional)        : Dictionnary to tune the plot of the raster.
                                                   It should be as 
                                                     map_plot = {'cmap'    : "terrain",  # cmap used to plot the DEM
-                                                                'alpha'    : 0.7,   # transparency of the hillshade
-                                                                'hshd'     : True,  # True to plot a hillshade above the DEM
-                                                                'hshd_az'  : 315,   # Azimuth used to compute the hillshade
-                                                                'hshd_alt' : 45}    # Altitude used to compute the hillshade
-                                                 default to None ; in that case, the values given in the ex. are used
-        profile_plot (dictionnary, optional)    :
-                                                 default to None ; in that case, the values given in the ex. are used
-        profiles_colors (list, optional)        :
-                                                 default to None ; in that case, all profiles are plot in red
+                                                                'alphaM'  : 0.7,   # transparency of the hillshade
+                                                                'alphaH'  : 1,    # transparency of the DEM
+                                                                'px_leg'  : "pixel value",  # legend of the color bar
+                                                                'hshd'    : True,  # True to plot a hillshade above the DEM
+                                                                'hshd_az' : 315,   # Azimuth used to compute the hillshade
+                                                                'hshd_alt': 45}    # Altitude used to compute the hillshade
+                                                  If a parameter is ommited or set to None, the default value will be applied.
+                                                  default to None ; in that case, the values given in the ex. are used
+        profile_plot (dictionnary, optional)    : Dictionnary to tune the swath graph
+                                                  It shoudl be as
+                                                  profile_plot = {'xlabel' : 'Distance',    # x-axis Label (str);
+                                                                  'ylabel' : None,  # y-axis label (str); If None, default to 'pixel value'
+                                                                  'x-unit' : None,  # unit of the x-axis. Should be None, 'm' or 'km'
+                                                                  'xlim'   : None,  # set the range of x-axis (as (xmin, xmax))
+                                                                  'ylim'   : None}  # set the range of x-axis (as (ymin, ymax))
+                                                  If a parameter is ommited or set to None, the default value will be applied.
+                                                  default to None ; in that case, the values given in the ex. are used
+        profiles_colors (list, optional)        : List of the colors to use for the swaths.
+                                                  The length of the list should be equal to the number of the swaths/features in the input shapefile
+                                                  default to None ; in that case, all profiles are plot in red.
 
     Raises:
         ValueError : if the specified path to the raster or the shapefile does not exists
