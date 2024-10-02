@@ -73,7 +73,9 @@ Options/inputs are (option_names):
 #. **subplots (bool, optional)**     : True to plot the raster and the swath on the same plot, False to plot the raste and the swath as two separate plots. Default =  False
 
 #. **map_plot (dict, optional)**     : Dictionnary to tune the plot of the raster. It should be as 
+
                                        >>>map_plot = {'cmap' : "terrain", 'alphaM' : 0.7, 'alphaH' : 1, 'hshd'     : True, 'hshd_az'  : 315, 'hshd_alt' : 45}
+                                       
                                        where **cmap** is the cmap used to plot the DEM, **alphaM** and **alphaH** the transparency of the DEM and hillshade, **hshd** is True if you want an hillshade above the DEM, and hshd_az and hshd_alt the Azimuth and altitude used to compute the hillshade
                                        Default to None ; in that case, the values given in the ex. are used
 
