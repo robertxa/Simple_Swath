@@ -76,8 +76,25 @@ Options/inputs are (option_names):
 
                                        >>>map_plot = {'cmap' : "terrain", 'alphaM' : 0.7, 'alphaH' : 1, 'hshd'     : True, 'hshd_az'  : 315, 'hshd_alt' : 45}
                                        
-                                      where **cmap** is the cmap used to plot the DEM, **alphaM** and **alphaH** the transparency of the DEM and hillshade, **hshd** is True if you want an hillshade above the DEM, and hshd_az and hshd_alt the Azimuth and altitude used to compute the hillshade
-                                      Default to None ; in that case, the values given in the ex. are used
+                                       where **cmap** is the cmap used to plot the DEM, **alphaM** and **alphaH** the transparency of the DEM and hillshade, **hshd** is True if you want an hillshade above the DEM, and hshd_az and hshd_alt the Azimuth and altitude used to compute the hillshade
+                                       If a parameter is ommited or set to None, the default value will be applied.
+                                       Default to None ; in that case, the values given in the ex. are used
+
+#. **profile_plot (dictionnary, optional)**    : Dictionnary to tune the swath graph It shoudl be as
+                                                 
+                                                 >>> profile_plot = {'xlabel' : 'Distance',
+                                                                  'ylabel' : None,  
+                                                                  'x-unit' : None,  
+                                                                  'xlim'   : None,  
+                                                                  'ylim'   : None}
+                                                  
+                                                  where **xlabel** and **ylabel** are the x-axis and y-axis Labels (str; if y-label isNone, default set to 'pixel value'), **x-unit** is unit of the x-axis (it should be None, 'm' or 'km), and xlim and ylim set the range of x-axis and y-axis (as (xmin, xmax) and (ymin, ymax))
+                                                  If a parameter is ommited or set to None, the default value will be applied.
+                                                  default to None ; in that case, the values given in the ex. are used
+
+#. **profiles_colors (list, optional)**        : List of the colors to use for the swaths.
+                                                  The length of the list should be equal to the number of the swaths/features in the input shapefile
+                                                  default to None ; in that case, all profiles are plot in red
 
 
 .. Caution::
