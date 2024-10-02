@@ -230,38 +230,74 @@ def swath(raster_path, shapefile_path, outfile,
 
     # set specificities of the map plot
     if map_plot != None:
-        if map_plot["cmap"] != None:
-            cmap = map_plot["cmap"]
+        if "cmap" in map_plot:
+            if map_plot["cmap"] != None:
+                cmap = map_plot["cmap"]
+            else:
+                cmap = "terrain"
         else:
             cmap = "terrain"
-        if map_plot["alpha"] != None:
-            alpha = map_plot["alpha"]
+
+        if "alphaM" in map_plot:
+            if map_plot["alphaM"] != None:
+                alphaM = map_plot["alphaM"]
+            else:
+                alphaM= 0.7
         else:
-            alpha= 0.7
-        if map_plot["map"] != None:
-            plotmap = map_plot["map"]
+            alphaM= 0.7
+
+        if "alphaH" in map_plot:
+            if map_plot["alphaH"] != None:
+                alphaH = map_plot["alphaH"]
+            else:
+                alphaM= 1
+        else:
+            alphaH= 1
+
+        if "map" in map_plot:
+            if map_plot["map"] != None:
+                plotmap = map_plot["map"]
+            else:
+                plotmap = True
         else:
             plotmap = True
-        if map_plot["px_leg"] != None:
-            px_leg = map_plot["px_leg"]
+
+        if "px_leg" in map_plot:
+            if map_plot["px_leg"] != None:
+                px_leg = map_plot["px_leg"]
+            else:
+                px_leg = "pixel value"
         else:
             px_leg = "pixel value"
-        if map_plot["hshd"] != None:
-            hshd = map_plot["hshd"]
+
+        if "hshd" in map_plot:
+            if map_plot["hshd"] != None:
+                hshd = map_plot["hshd"]
+            else:
+                hshd = True
         else:
             hshd = True
-        if map_plot["hshd_az"] != None:
-            hshd_az = map_plot["hshd_az"]
-            if hshd_az > 360.0:
-                raise ValueError("Azimuth value should be less than or equal to 360 degrees")
+
+        if "hshd_az" in map_plot:
+            if map_plot["hshd_az"] != None:
+                hshd_az = map_plot["hshd_az"]
+                if abs(hshd_az) > 360.0:
+                    raise ValueError("Azimuth value should be less than or equal to 360 degrees")
+            else:
+                hshd_az = 315
         else:
             hshd_az = 315
-        if map_plot["hshd_alt"] != None:
-            hshd_alt = map_plot["hshd_alt"]
-            if hshd_alt > 90:
-                raise ValueError("Altitude value should be less than or equal to 90 degrees")
+
+        if "hshd_alt" in map_plot:
+            if map_plot["hshd_alt"] != None:
+                hshd_alt = map_plot["hshd_alt"]
+                if hshd_alt > 90:
+                    raise ValueError("Altitude value should be less than or equal to 90 degrees")
+            else:
+                hshd_alt = 45
         else:
             hshd_alt = 45
+
     else:
         cmap = "terrain"
         alpha= 0.7
@@ -272,24 +308,43 @@ def swath(raster_path, shapefile_path, outfile,
         hshd_alt = 45
     
     if profile_plot != None:
-        if profile_plot["xlabel"] != None:
-            xlabel = profile_plot["xlabel"]
+        if "xlabel" in profile_plot:
+            if profile_plot["xlabel"] != None:
+                xlabel = profile_plot["xlabel"]
+            else:
+                xlabel = 'Distance'
         else:
             xlabel = 'Distance'
-        if profile_plot["ylabel"] != None:
-            ylabel = profile_plot["ylabel"]
+        
+        if "ylabel" in profile_plot:
+            if profile_plot["ylabel"] != None:
+                ylabel = profile_plot["ylabel"]
+            else:
+                ylabel = px_leg
         else:
             ylabel = px_leg
-        if profile_plot["x-unit"] != None:
-            xunit = profile_plot["x-unit"]
+
+        if "x-unit" in profile_plot:
+            if profile_plot["x-unit"] != None:
+                xunit = profile_plot["x-unit"]
+            else:
+                xunit = None
         else:
             xunit = None
-        if profile_plot["xlim"] != None:
-            xlim = profile_plot["xlim"]
+
+        if "xlim" in profile_plot:    
+            if profile_plot["xlim"] != None:
+                xlim = profile_plot["xlim"]
+            else:
+                xlim = None
         else:
             xlim = None
-        if profile_plot["ylim"] != None:
-            ylim = profile_plot["ylim"]
+
+        if "ylim" in profile_plot:    
+            if profile_plot["ylim"] != None:
+                ylim = profile_plot["ylim"]
+            else:
+                ylim = None
         else:
             ylim = None
     else:
@@ -578,10 +633,10 @@ def swath(raster_path, shapefile_path, outfile,
 
     if hshd:
         ax1.imshow(hillshd, extent = extent,
-                    cmap = 'Greys_r', alpha = 1)
+                    cmap = 'Greys_r', alpha = alphaH)
     if plotmap:
         img = ax1.imshow(raster_array, extent = extent,
-                    cmap = cmap, alpha = alpha)
+                    cmap = cmap, alpha = alphaM)
         cbar = fig.colorbar(img, ax = ax1, label = px_leg, shrink = 0.7)
     
 
@@ -754,8 +809,9 @@ if __name__ == '__main__':
     subplots = True
 
     #map_plot: Set colormap and hillshade for the map plot
-    map_plot = {'cmap'    : "terrain",
-                'alpha'    : 0.7,
+    map_plot = {'cmap'     : "terrain",
+                'alphaM'   : 0.7,
+                'alphaH'   : 1,
                 'map'      : True,
                 'px_leg'   : 'Elevation (m)',
                 'hshd'     : True,
