@@ -157,7 +157,8 @@ def swath(raster_path, shapefile_path, outfile,
           meanmedian = 'median', minmax = False, frequencyplot = False, TEMP = False,
           ylim = None, subplots = False, map_plot = None, profile_plot = None, profiles_colors = None):
     """
-    
+    Main function to extract swath profiles
+
     Args:
         raster_path (str)                       : Path of the Raster to use.
         shapefile_path (str)                    : Path of the shapefile to use to extract the profile.
@@ -840,6 +841,7 @@ if __name__ == '__main__':
     #                 Should be a list with the same dimensions than the numbers of features
     #                 Colors should be matplotlib colors
     #profiles_colors = ['red', 'blue', 'green']
+    profiles_colors = None
     
 
     swath(raster_file, shapefile_file, outfile,

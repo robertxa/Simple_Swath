@@ -33,7 +33,7 @@ To import the module:
 	>>> from simple_swath import swath
 	
 To run the swath extraction:
-	>>> swath(raster_path = 'Rasterpathandname', shapefile_path = 'shapepathandname', outfile = 'prefixname', increment_value = 10, window_size = 100, bins = 40, xshift = Non, nodata_value = -9999, meanmedian = 'mean', minmax = True, frequencyplot = True, TEMP = False, ylim = None, subplots = True)
+	>>> swath(raster_path = 'Rasterpathandname', shapefile_path = 'shapepathandname', outfile = 'prefixname', increment_value = 10, window_size = 100, bins = 40, xshift = Non, nodata_value = -9999, meanmedian = 'mean', minmax = True, frequencyplot = True, TEMP = False, ylim = None, subplots = True, map_plot = map_plot = {'cmap': "terrain", 'alphaM' : 0.7, 'alphaH' : 1, 'map' : True, 'px_leg' : 'Elevation (m)', 'hshd' : True, 'hshd_az' : 315, 'hshd_alt' : 45}, profile_plot = profile_plot = {'xlabel' : 'Distance (m)', 'ylabel' : None, 'x-unit' : 'm', 'xlim' : None, 'ylim' : None}, profiles_colors = None)
 
 Options/inputs
 --------------
