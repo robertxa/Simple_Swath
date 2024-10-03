@@ -98,7 +98,7 @@ Options/inputs are (option_names):
 
 
 .. Caution::
-  Be carefull, the raster should be projected and the grid should be in meters (m)...
+  **Be carefull, the raster should be projected and the grid should be in meters (m)...**
 
 
 Help files
