@@ -2,12 +2,12 @@ TO DO
 	- BUG?: Check frequency plot --> seems to be outside of min-max bounds...
 	- simplify colorbar for frequency plot when more than one single swaths
 	- Understand why scalebar is not coherent with map scale
-	- Update Readme for new options (2024/10/04)
 	-
 
 BUGS FOUNDS/TO BE CORRECTED
 	- 2024/10/01: correction in shifting mode when plot in meters
-	-  
+	- 2024/10/04: ylim passed twice; solved.
+	- 
 
 DONE
 	- 2024/02/01: save stats as a pickle binary file
