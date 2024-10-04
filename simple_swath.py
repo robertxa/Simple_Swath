@@ -124,38 +124,10 @@ def buildbox(raster_path, raster_dataset, line, distance, k, spl_wndw, spl_incrt
     return values_around_point, stats
 
 #########################################################################################
-#def hillshade(array, azimuth = 315, angle_altitude = 45):
-#    """
-#    Function to compute hillshade from a dem
-
-#    Args:
-#        array (float)         : input  (elevation values) as a numpy array of floats
-#        azimuth (float)       : sun azimuth for the hillshade in degrees
-#                                deflaut = 315
-#        angle_altitude (float): sun altitude for the hillshade in degrees
-#                                default = 45
-
-#    Returns:
-#        hillshade (float)     : numpy array of float, corresponding to thecomputed  hillshade
-#    """
-#    azimuth = 360.0 - azimuth 
-    
-#    x, y = np.gradient(array)
-#    slope = np.pi/2. - np.arctan(np.sqrt(x*x + y*y))
-#    aspect = np.arctan2(-x, y)
-#    azm_rad = azimuth*np.pi/180. # azimuth in radians
-#    alt_rad = angle_altitude*np.pi/180. # altitude in radians
-    
-#    # Compute hillshade
-#    shaded = np.sin(alt_rad)*np.sin(slope) + np.cos(alt_rad)*np.cos(slope)*np.cos((azm_rad - np.pi/2.) - aspect)
-    
-#    return 255*(shaded + 1)/2
-
-#########################################################################################
 def swath(raster_path, shapefile_path, outfile, 
           spl_incrt, spl_wndw, bins = None, xshift = None, nodata_value = None,
           meanmedian = 'median', minmax = False, frequencyplot = False, TEMP = False,
-          ylim = None, subplots = False, map_plot = None, profile_plot = None, profiles_colors = None):
+          subplots = False, map_plot = None, profile_plot = None, profiles_colors = None):
     """
     Main function to extract swath profiles
 
@@ -178,8 +150,6 @@ def swath(raster_path, shapefile_path, outfile,
         TEMP (bool, optional)                   : True to keep the temporary shapefiles,
                                                   False to delete the folder TEMP/.
                                                   Defaults to False.
-        ylim (tuple)                            : Tuple of y limits for the graph profile;
-                                                  Defaults to None
         subplots (bool, optional)               : True to plot the raster and the swath on the same plot
                                                   False to plot the raste and the swath as two separate plots
                                                   default =  False
@@ -188,6 +158,8 @@ def swath(raster_path, shapefile_path, outfile,
                                                     map_plot = {'cmap'    : "terrain",  # cmap used to plot the DEM
                                                                 'alphaM'  : 0.7,   # transparency of the hillshade
                                                                 'alphaH'  : 1,    # transparency of the DEM
+                                                                'map'     : True, # True to plot the DEM over the hillshade, False to not plot the DEM, default to True
+                                                                'scalebar : False, # True to add a scale bar to the map
                                                                 'px_leg'  : "pixel value",  # legend of the color bar
                                                                 'hshd'    : True,  # True to plot a hillshade above the DEM
                                                                 'hshd_az' : 315,   # Azimuth used to compute the hillshade
@@ -199,8 +171,9 @@ def swath(raster_path, shapefile_path, outfile,
                                                   profile_plot = {'xlabel' : 'Distance',    # x-axis Label (str);
                                                                   'ylabel' : None,  # y-axis label (str); If None, default to 'pixel value'
                                                                   'x-unit' : None,  # unit of the x-axis. Should be None, 'm' or 'km'
-                                                                  'xlim'   : None,  # set the range of x-axis (as (xmin, xmax))
-                                                                  'ylim'   : None}  # set the range of x-axis (as (ymin, ymax))
+                                                                  'xlim'   : None,  # set the range of x-axis (as (xmin, xmax)); tuple
+                                                                  'ylim'   : None}  # set the range of x-axis (as (ymin, ymax)); tuple
+                                                                  'legendP': True   # True to add the legend to the swath plot
                                                   If a parameter is ommited or set to None, the default value will be applied.
                                                   default to None ; in that case, the values given in the ex. are used
         profiles_colors (list, optional)        : List of the colors to use for the swaths.
@@ -834,10 +807,6 @@ if __name__ == '__main__':
     #TEMP = True
     TEMP = False
 
-    # Set the ylim of the profil if needed; None by default
-    #ylim = (0,2.6)
-    ylim = None    # if option not used
-
     # Set if you want the raster plot and the swath on the same fingure as sub-plots (True)
     #subplots = False
     subplots = True
@@ -872,5 +841,5 @@ if __name__ == '__main__':
     swath(raster_file, shapefile_file, outfile,
             increment_value, window_size, bins, xshift, nodata_value,
             meanmedian, minmax, frequencyplot, TEMP,
-            ylim, subplots, map_plot, profile_plot, profiles_colors)
+            subplots, map_plot, profile_plot, profiles_colors)
 

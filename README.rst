@@ -33,7 +33,36 @@ To import the module:
 	>>> from simple_swath import swath
 	
 To run the swath extraction:
-	>>> swath(raster_path = 'Rasterpathandname', shapefile_path = 'shapepathandname', outfile = 'prefixname', increment_value = 10, window_size = 100, bins = 40, xshift = Non, nodata_value = -9999, meanmedian = 'mean', minmax = True, frequencyplot = True, TEMP = False, ylim = None, subplots = True, map_plot = map_plot = {'cmap': "terrain", 'alphaM' : 0.7, 'alphaH' : 1, 'map' : True, 'px_leg' : 'Elevation (m)', 'hshd' : True, 'hshd_az' : 315, 'hshd_alt' : 45}, profile_plot = profile_plot = {'xlabel' : 'Distance (m)', 'ylabel' : None, 'x-unit' : 'm', 'xlim' : None, 'ylim' : None}, profiles_colors = None)
+	>>> swath(raster_path = 'Rasterpathandname',
+            shapefile_path = 'shapepathandname',
+            outfile = 'prefixname',
+            increment_value = 10,
+            window_size = 100,
+            bins = 40,
+            xshift = None,
+            nodata_value = -9999, 
+            meanmedian = 'mean', 
+            minmax = True,
+            frequencyplot = True,
+            TEMP = False,
+            ylim = None, 
+            subplots = True,
+            map_plot = {'cmap': "terrain",
+                       'alphaM' : 0.7, 
+                       'alphaH' : 1,
+                       'map' : True,
+                       'scalebar' : False,
+                       'px_leg' : 'Elevation (m)',
+                       'hshd' : True,
+                       'hshd_az' : 315,
+                       'hshd_alt' : 45},
+            profile_plot = {'xlabel'  : 'Distance (m)',
+                            'ylabel'  : None, 
+                            'x-unit'  : 'm',
+                            'xlim'    : None,
+                            'ylim'    : None,
+                            'legendP' : True},
+            profiles_colors = None)
 
 Options/inputs
 --------------
@@ -74,27 +103,36 @@ Options/inputs are (option_names):
 
 #. **map_plot (dict, optional)**     : Dictionnary to tune the plot of the raster. It should be as 
 
-                                       >>>map_plot = {'cmap' : "terrain", 'alphaM' : 0.7, 'alphaH' : 1, 'hshd'     : True, 'hshd_az'  : 315, 'hshd_alt' : 45}
+                                       >>>map_plot = {'cmap' : "terrain",
+                                                      'alphaM' : 0.7, 
+                                                      'alphaH' : 1, 
+                                                      'map'      : True,
+                                                      'scalebar' : False,
+                                                      'px_leg'   : 'Elevation (m)',
+                                                      'hshd'     : True, 
+                                                      'hshd_az'  : 315, 
+                                                      'hshd_alt' : 45}
                                        
-                                       where **cmap** is the cmap used to plot the DEM, **alphaM** and **alphaH** the transparency of the DEM and hillshade, **hshd** is True if you want an hillshade above the DEM, and hshd_az and hshd_alt the Azimuth and altitude used to compute the hillshade
+                                       where **cmap** is the cmap used to plot the DEM, **alphaM** and **alphaH** the transparency of the DEM and hillshade, **map** is True to plot the DEM over the hillshade, **scalebar** is True to add a scalebar to the map plot, **px_leg** is the legend of the pixel values, **hshd** is True if you want an hillshade above the DEM, and hshd_az and hshd_alt the Azimuth and altitude used to compute the hillshade
                                        If a parameter is ommited or set to None, the default value will be applied.
                                        Default to None ; in that case, the values given in the ex. are used
 
 #. **profile_plot (dictionnary, optional)**    : Dictionnary to tune the swath graph It shoudl be as
                                                  
                                                  >>> profile_plot = {'xlabel' : 'Distance',
-                                                                  'ylabel' : None,  
-                                                                  'x-unit' : None,  
-                                                                  'xlim'   : None,  
-                                                                  'ylim'   : None}
+                                                                     'ylabel' : None,  
+                                                                     'x-unit' : None,  
+                                                                     'xlim'   : None,  
+                                                                     'ylim'   : None,
+                                                                     'legendP': False}
                                                   
-                                                  where **xlabel** and **ylabel** are the x-axis and y-axis Labels (str; if ylabel is None, default set to 'pixel value'), **x-unit** is unit of the x-axis (it should be None, 'm' or 'km), and **xlim** and **ylim** set the range of x-axis and y-axis (as (xmin, xmax) and (ymin, ymax))
+                                                  where **xlabel** and **ylabel** are the x-axis and y-axis Labels (str; if ylabel is None, default set to 'pixel value'), **x-unit** is unit of the x-axis (it should be None, 'm' or 'km), **xlim** and **ylim** set the range of x-axis and y-axis (Tuples as (xmin, xmax) and (ymin, ymax)), and **legendP** is True to plot the legend of the swath.
                                                   If a parameter is ommited or set to None, the default value will be applied.
-                                                  default to None ; in that case, the values given in the ex. are used
+                                                  Default to None ; in that case, the values given in the ex. are used
 
 #. **profiles_colors (list, optional)**        : List of the matplotlib colors (see https://matplotlib.org/stable/gallery/color/colormap_reference.html) to use for the swaths.
                                                   The length of the list should be equal to the number of the swaths/features in the input shapefile
-                                                  default to None ; in that case, all profiles are plot in red
+                                                  Default to None ; in that case, all profiles are plot in red
 
 
 .. Caution::
