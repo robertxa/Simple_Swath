@@ -1,7 +1,9 @@
 TO DO
 	- BUG?: Check frequency plot --> seems to be outside of min-max bounds...
 	- simplify colorbar for frequency plot when more than one single swaths
-	- 
+	- Understand why scalebar is not coherent with map scale
+	- Update Readme for new options (2024/10/04)
+	-
 
 BUGS FOUNDS/TO BE CORRECTED
 	- 2024/10/01: correction in shifting mode when plot in meters
@@ -11,7 +13,7 @@ DONE
 	- 2024/02/01: save stats as a pickle binary file
 	- 2024/02/01: Separate output graphs by default; option for subgraphs
 	- 2024/09/13: Test if spl_inc and spl_wndw are larger than 3 * cell size
-	- 2024/09/13: Add support for 3D Line Stinrg (wkbLineString25D)
+	- 2024/09/13: Add support for 3D Line String (wkbLineString25D)
 	- 2024/09/17: Separate profiles when several features in the polylines shp, 1 profile for each polyline feature
 	- 2024/09/17: Reorganization of the compuation and the graph drawing
 	- 2024/09/17: Separate csv files when several features in the polylines shp, 1 file for each polyline feature
@@ -22,4 +24,6 @@ DONE
 	- 2024/10/01: Give the possibility to the user when several features to plot, to choose the color of each swath, and each feature
 	- 2024/10/01: Give the possibility to the user to choose title/axes/legends
 	- 2024/10/02: remove DEM NaN values from the map plot
+	- 2024/10/04: Add option for scalebar or no 
+	- 2024/10/04: Add option for legend or not in the swath graph
 	- 
