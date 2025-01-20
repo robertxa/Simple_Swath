@@ -676,7 +676,7 @@ def swath(raster_path, shapefile_path, outfile,
             ax1.fill(buffer_x, buffer_y, color = profiles_colors[k], alpha = 0.3)
         k += 1        
 
-    print(scalebar)
+    #print(scalebar)
     if scalebar:
         # Add scale bar to the map
         scalebar = ScaleBar(dx = px_size, location='lower right', 
